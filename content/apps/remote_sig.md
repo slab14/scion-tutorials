@@ -13,6 +13,7 @@ The [SCION IP Gateway `SIG`](https://github.com/netsec-ethz/scion/tree/scionlab/
 To test the SIG we will make use of the Vagrant configurations provided on [scionlab.org](https://scionlab.org/).
 Set up a Vagrant VM on a host A and a host B using the instructions from [Virtual machine with VPN](https://netsec-ethz.github.io/scion-tutorials/virtual_machine_setup/dynamic_ip/).
 
+
 Use locations specific to your test:
 
 ```shell
@@ -36,6 +37,15 @@ git clone -b scionlab https://github.com/netsec-ethz/scion
 go build -o $GOPATH/bin/sig ~/scion/go/sig/main.go
 sudo setcap cap_net_admin+eip $GOPATH/bin/sig
 ```
+
+A new entry needs to be added to the end of `/etc/hosts` adding the AS as an entry for localhost.
+
+
+```shell
+${IA},[10.0.8.XX]	localhost
+```
+
+You need to replace ${IA} with the AS id of the local AS, and 10.0.8.XX with the openVPN tunnel's IP address.
 
 Enable routing:
 
@@ -165,7 +175,7 @@ The infrastructure keeps several versions of the file `topology.json` and you wi
      }
    },
 ```
-Make this edit to the following files, then replace the "172.16.0.XX" IP with the openVPN tunnel IP of the local host A and 17-ffaa_1_XXX with the AS id of the local AS A:
+Make this edit to the following files, then replace the "172.16.0.XX" IP with the openVPN tunnel IP of the local host A and 17-ffaa_1_XXX with the AS id of the local AS A (ensuring to keep the `-1` at the end):
 ```
 ${SC}/gen/ISD${ISD}/AS${AS}/endhost/topology.json
 ${SC}/gen/ISD${ISD}/AS${AS}/br${IA}-1/topology.json
@@ -295,7 +305,7 @@ and
      }
    },
 ```
-Make this edit to the following files, then replace the "172.16.0.XX" IP with the openVPN tunnel IP of the local host B and 17-ffaa_1_XXX with the AS id of the local AS B:
+Make this edit to the following files, then replace the "172.16.0.XX" IP with the openVPN tunnel IP of the local host B and 17-ffaa_1_XXX with the AS id of the local AS B (ensuring to keep the `-1` at the end):
 ```
 ${SC}/gen/ISD${ISD}/AS${AS}/endhost/topology.json
 ${SC}/gen/ISD${ISD}/AS${AS}/br${IA}-1/topology.json
